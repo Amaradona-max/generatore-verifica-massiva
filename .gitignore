@@ -1,0 +1,32 @@
+# File da ignorare nel repository
+
+# File di sistema
+.DS_Store
+Thumbs.db
+
+# File di ambiente
+.env
+.env.local
+.env.production
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# File di runtime
+node_modules/
+dist/
+build/
+
+# File Excel di test (eventuali)
+*.xlsx
+*.xls
+*.xlsm
+
+# File generati dall'applicazione
+*.txt
+
+# File temporanei
+*.tmp
+*.temp
