@@ -290,6 +290,148 @@
                 flex-direction: column;
             }
         }
+
+        /* Stili per il pulsante Guida */
+        .btn-help {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 12px 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+            z-index: 1000;
+        }
+        
+        .btn-help:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.6);
+        }
+
+        /* Stili per il modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            animation: fadeIn 0.3s;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 80%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #2a5298, #1e3c72);
+            color: white;
+            padding: 20px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.5em;
+        }
+
+        .close {
+            color: white;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .close:hover {
+            color: #ff6b6b;
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .modal-footer {
+            padding: 20px;
+            text-align: center;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .guide-section {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .guide-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .guide-section h3 {
+            color: #2a5298;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .guide-section p {
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .guide-section ul, .guide-section ol {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        .guide-section li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .guide-section code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            color: #d63384;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { 
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to { 
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
     </style>
 </head>
 <body>
@@ -298,6 +440,7 @@
             <h1>📄 Verifica delle Inadempienze</h1>
             <p>Generatore Flussi Massivi di Verifica - Conforme alle specifiche IRM (Lunghezza Record 300 byte)</p>
             <div class="badge-test">🧪 MODALITÀ TEST - 3 Fornitori (DIEMME, BOSTON, BIOTRONIK)</div>
+            <button class="btn-help" onclick="showHelp()">❓ Guida</button>
         </div>
         
         <div class="content">
@@ -400,16 +543,77 @@
         </div>
     </div>
 
+    <!-- Modal Guida -->
+    <div id="helpModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>❓ Guida all'Utilizzo</h2>
+                <span class="close" onclick="closeHelp()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="guide-section">
+                    <h3>🚀 COME USARE L'APPLICAZIONE</h3>
+                    <p><strong>1. VERIFICA I DATI FORNITORI</strong><br>I dati dei 3 fornitori sono già caricati. Controlla che siano corretti.</p>
+                    
+                    <p><strong>2. INSERISCI IL NOME FILE</strong><br>Usa il formato: <code>IRMEQS20250000000001.TXT</code><br>- IRMEQS (fisso)<br>- 2025 (anno)<br>- 0000000001 (progressivo 10 cifre)</p>
+                    
+                    <p><strong>3. INSERISCI LA DATA (OPZIONALE)</strong><br>Formato: AAAAMMGG (es: 20250324)<br>Se vuoto, usa la data di oggi</p>
+                    
+                    <p><strong>4. CLICCA "GENERA E ANTEPRIMA"</strong><br>Controlla l'anteprima del file generato</p>
+                    
+                    <p><strong>5. SCARICA IL FILE</strong><br>Dopo aver verificato l'anteprima, clicca "Scarica File TXT"</p>
+                    
+                    <p><strong>6. PER CARICARE NUOVI DATI</strong><br>Usa "Carica Nuovo File" per importare un Excel con nuovi fornitori</p>
+                </div>
+                
+                <div class="guide-section">
+                    <h3>📋 FORMATI RICHIESTI</h3>
+                    <p><strong>NOME FILE:</strong> IRMEQS + ANNO 4 cifre + PROGRESSIVO 10 cifre + .TXT</p>
+                    <p><strong>DATA:</strong> AAAAMMGG (Anno, Mese, Giorno)</p>
+                    <p><strong>CODICE FISCALE:</strong> Viene automaticamente allineato a 16 caratteri</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="closeHelp()">Chiudi</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // Dati dei fornitori dal file VERIFICA MASSIVA PROP. PROVA.xlsx
-        const suppliersData = [
-            { cod_fornitore: "F0059648", descrizione: "DIEMME S.R.L. DISPOSITIVI MEDICI", cf: "11873880154", importo_lordo: 6803 },
-            { cod_fornitore: "F0011177", descrizione: "BOSTON SCIENTIFIC S.P.A.", cf: "11206730159", importo_lordo: 18798 },
-            { cod_fornitore: "F0060904", descrizione: "BIOTRONIK ITALIA S.P.A.", cf: "09699320017", importo_lordo: 11273 }
-        ];
+        // Dati dei fornitori (vuoto all'avvio - verranno caricati da file Excel)
+        const suppliersData = [];
 
         let generatedContent = null;
         let generatedRecords = [];
+
+        // Funzioni per la Guida
+        function showHelp() {
+            const modal = document.getElementById('helpModal');
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeHelp() {
+            const modal = document.getElementById('helpModal');
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Chiudi il modal cliccando fuori dal contenuto
+        window.onclick = function(event) {
+            const modal = document.getElementById('helpModal');
+            if (event.target === modal) {
+                closeHelp();
+            }
+        }
+
+        // Chiudi il modal con il tasto ESC
+        document.onkeydown = function(event) {
+            event = event || window.event;
+            if (event.key === 'Escape') {
+                closeHelp();
+            }
+        }
 
         // Validazione nome file secondo specifiche
         function validateFilename() {
@@ -953,32 +1157,76 @@
             showMessage(`✅ File "${filename}" scaricato con successo! Totale record: ${lines.length}`);
         }
 
-        // Reset form
+        // Reset form - Pulisce completamente tutto
         function resetForm() {
-            document.getElementById('filename').value = 'IRMEQS20250000000001.TXT';
-            const now = new Date();
-            const creationDate = now.getFullYear() + 
-                                String(now.getMonth() + 1).padStart(2, '0') + 
-                                String(now.getDate()).padStart(2, '0');
-            document.getElementById('creationDate').value = creationDate;
+            console.log('🔄 Reset avviato - Pulisco tutto');
+            
+            // Svuota completamente i campi di configurazione
+            document.getElementById('filename').value = '';
+            document.getElementById('creationDate').value = '';
+            
+            // Rimuovi classi di validazione
+            const filenameInput = document.getElementById('filename');
+            filenameInput.classList.remove('valid', 'invalid');
+            
+            // Nascondi messaggi di validazione
+            document.getElementById('filenameError').style.display = 'none';
+            document.getElementById('filenameValid').style.display = 'none';
+            
+            // Nascondi sezioni
             document.getElementById('previewSection').style.display = 'none';
             document.getElementById('statsSection').style.display = 'none';
             document.getElementById('detailSection').style.display = 'none';
+            
+            // Disabilita pulsanti
             document.getElementById('downloadBtn').disabled = true;
+            document.getElementById('generateBtn').disabled = true;
+            
+            // Nascondi messaggi
             document.getElementById('successMessage').style.display = 'none';
             document.getElementById('errorMessage').style.display = 'none';
+            
+            // Nasconde il badge di test MODALITÀ TEST se presente
+            const testBadge = document.querySelector('.badge-test');
+            if (testBadge) {
+                testBadge.style.display = 'none';
+            }
+            
+            // Resetta il titolo della sezione Dati Fornitori
+            const datiFornitoriTitle = document.querySelector('.section-title:first-child');
+            if (datiFornitoriTitle) {
+                datiFornitoriTitle.innerHTML = '<span>📊</span> Dati Fornitori';
+            }
+            
+            // Pulisce completamente i dati
             generatedContent = null;
             generatedRecords = [];
-            validateFilename();
+            
+            // SVUOTA completamente i fornitori (rimuove anche quelli di test)
+            suppliersData.length = 0;
+            
+            // Aggiorna la tabella (vuota)
+            loadSupplierTable();
+            
+            console.log('✅ Reset completato - suppliersData vuoto:', suppliersData.length === 0);
+            showMessage('🔄 Applicazione resettata completamente - Pronta per nuovo file', 'info');
         }
 
-        // Inizializza
-        loadSupplierTable();
-        const now = new Date();
-        document.getElementById('creationDate').value = now.getFullYear() + 
-                                                       String(now.getMonth() + 1).padStart(2, '0') + 
-                                                       String(now.getDate()).padStart(2, '0');
-        validateFilename();
+        // Inizializza e reset automatico all'avvio - assicura che il DOM sia pronto
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                setTimeout(function() {
+                    resetForm();
+                    console.log('✅ Reset automatico eseguito dopo DOMContentLoaded');
+                }, 100);
+            });
+        } else {
+            // DOM già caricato, esegui immediatamente
+            setTimeout(function() {
+                resetForm();
+                console.log('✅ Reset automatico eseguito (DOM già pronto)');
+            }, 100);
+        }
     </script>
 </body>
 </html>
