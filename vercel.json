@@ -1,0 +1,18 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "Verifica delle Inadempienze.html",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/Verifica delle Inadempienze.html"
+    }
+  ],
+  "outputDirectory": ".",
+  "cleanUrls": true,
+  "trailingSlash": false
+}
