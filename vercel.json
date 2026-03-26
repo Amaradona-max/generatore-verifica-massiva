@@ -2,14 +2,14 @@
   "version": 2,
   "builds": [
     {
-      "src": "Verifica delle Inadempienze.html",
+      "src": "index.html",
       "use": "@vercel/static"
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/Verifica delle Inadempienze.html"
+      "dest": "/index.html"
     }
   ],
   "outputDirectory": ".",
