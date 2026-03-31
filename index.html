@@ -462,7 +462,7 @@
                                 <th>Descrizione</th>
                                 <th>Codice Fiscale</th>
                                 <th>Lunghezza CF</th>
-                                <th>Importo Lordo (€)</th>
+                                <th>Importo Netto (€)</th>
                             </tr>
                         </thead>
                         <tbody id="supplierTableBody">
@@ -653,7 +653,7 @@
                 row.insertCell(2).textContent = supplier.descrizione;
                 row.insertCell(3).textContent = supplier.cf;
                 row.insertCell(4).textContent = supplier.cf.length + " caratteri";
-                row.insertCell(5).textContent = supplier.importo_lordo.toFixed(2);
+                row.insertCell(5).textContent = supplier.importo_netto.toFixed(2);
                 
                 // Evidenzia CF con lunghezza diversa da 16
                 if (supplier.cf.length !== 16) {
@@ -752,7 +752,7 @@
                 rmdRecord += formatString('2', 1);                          // Tipo Soggetto (pos 18) = 2 (persona giuridica)
                 rmdRecord += formatString(supplier.cf, 16);                 // Codice Fiscale (pos 19-34)
                 rmdRecord += formatString(supplier.cod_fornitore, 15);      // Identificativo Pagamento (pos 35-49)
-                rmdRecord += formatAmount(supplier.importo_lordo, 15);      // Importo Titolo (pos 50-64)
+                rmdRecord += formatAmount(supplier.importo_netto, 15);      // Importo Titolo (pos 50-64)
                 rmdRecord += formatString('', 35);                          // Indirizzo Beneficiario (blank)
                 rmdRecord += formatString('', 5);                           // Numero Civico (blank)
                 rmdRecord += formatString('', 5);                           // CAP (blank)
@@ -984,7 +984,7 @@
                             cod_fornitore: codFornitore,
                             descrizione: descrizione,
                             cf: cf,
-                            importo_lordo: importoNetto
+                            importo_netto: importoNetto
                         });
                     }
                 }
@@ -1023,7 +1023,7 @@
             suppliersData.forEach((supplier, index) => {
                 previewText += `${index + 1}. ${supplier.cod_fornitore} - ${supplier.descrizione}\n`;
                 previewText += `   CF: ${supplier.cf} (${supplier.cf.length} caratteri)\n`;
-                previewText += `   Importo: € ${supplier.importo_lordo.toFixed(2)}\n\n`;
+                previewText += `   Importo: € ${supplier.importo_netto.toFixed(2)}\n\n`;
             });
             
             previewContent.textContent = previewText;
@@ -1117,7 +1117,7 @@
                     detailHtml += `&nbsp;&nbsp;Codice Fiscale Originale: "${rec.supplier.cf}" (${rec.supplier.cf.length} caratteri)<br>`;
                     detailHtml += `&nbsp;&nbsp;Codice Fiscale con Padding: "${rec.cfPadded}" (16 caratteri)<br>`;
                     detailHtml += `&nbsp;&nbsp;Identificativo Pagamento: ${rec.supplier.cod_fornitore}<br>`;
-                    detailHtml += `&nbsp;&nbsp;Importo Lordo: € ${rec.supplier.importo_lordo.toFixed(2)} → ${formatAmount(rec.supplier.importo_lordo, 15)} (in centesimi)<br><br>`;
+                    detailHtml += `&nbsp;&nbsp;Importo Netto: € ${rec.supplier.importo_netto.toFixed(2)} → ${formatAmount(rec.supplier.importo_netto, 15)} (in centesimi)<br><br>`;
                 } else if (rec.type === 'RMZ') {
                     detailHtml += `<span style="color:#dc3545;">🔴 RMZ (Record di Coda)</span><br>`;
                     detailHtml += `&nbsp;&nbsp;Progressivo Record: ${rec.counter.toString().padStart(7, '0')}<br>`;
@@ -1134,7 +1134,7 @@
             const previewContent = document.getElementById('previewContent');
             let previewLines = [];
             
-            previewLines.push('╔════════════════════════════════════════════════════════════════════════════════╗');
+            previewLines.push('╔════════════════════════════════════════════════════════════════════════════════╝');
             previewLines.push('║                              CONTENUTO COMPLETO DEL FILE                         ║');
             previewLines.push('╚════════════════════════════════════════════════════════════════════════════════╝');
             previewLines.push('');
