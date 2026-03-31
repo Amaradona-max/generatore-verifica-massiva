@@ -676,6 +676,15 @@
             return String(num).padStart(length, '0');
         }
 
+        // Valida il Codice Fiscale (semplice controllo per persone giuridiche)
+        function validateCodiceFiscale(cf) {
+            if (!cf) return false;
+            const cleanedCf = cf.trim();
+            // Regex per Partita IVA (11 cifre numeriche)
+            const pivaRegex = /^[0-9]{11}$/;
+            return pivaRegex.test(cleanedCf);
+        }
+
         // Formatta importo in centesimi
         function formatAmount(amount, length) {
             const value = Math.round(amount * 100);
@@ -726,6 +735,16 @@
             
             // Record RMD per ogni fornitore
             suppliersData.forEach((supplier, idx) => {
+                // Validazione del CF prima di creare il record
+                if (!validateCodiceFiscale(supplier.cf)) {
+                    console.warn(`Codice Fiscale non valido per fornitore ${supplier.cod_fornitore}: ${supplier.cf}. Record saltato.`);
+                    // Aggiungi un messaggio di errore visibile all'utente
+                    const errorDiv = document.getElementById('errorMessage');
+                    errorDiv.innerHTML += `⚠️ Codice Fiscale non valido per il fornitore #${idx + 1} (${supplier.descrizione}). Il record non è stato generato.<br>`;
+                    errorDiv.style.display = 'block';
+                    return; // Salta questo fornitore
+                }
+
                 let rmdRecord = '';
                 rmdRecord += formatString('RMD', 3);                        // Tipo Record (pos 1-3)
                 rmdRecord += formatNumber(recordCounter, 7);                // Progressivo Record (pos 4-10)
@@ -905,10 +924,12 @@
             const suppliers = [];
             
             // Cerca l'intestazione per individuare le colonne corrette
-            let codFornitoreIndex = -1;
             let descrizioneIndex = -1;
             let cfIndex = -1;
-            let importoIndex = -1;
+            let importoLordoIndex = -1;
+            let impostaIndex = -1;
+            let importoNettoIndex = -1;
+            let codFornitoreIndex = -1;
             
             // Scansiona le prime righe per trovare l'intestazione
             for (let i = 0; i < Math.min(10, data.length); i++) {
@@ -918,46 +939,52 @@
                     for (let j = 0; j < row.length; j++) {
                         const cellValue = String(row[j] || '').toLowerCase().trim();
                         
-                        if (cellValue.includes('cod') && cellValue.includes('fornitore')) {
-                            codFornitoreIndex = j;
-                        } else if (cellValue.includes('descrizione') || cellValue.includes('ragione')) {
+                        if (cellValue.includes('descrizione') || cellValue.includes('ragione')) {
                             descrizioneIndex = j;
                         } else if (cellValue.includes('codice fiscale') || cellValue.includes('cf') || cellValue.includes('p.iva')) {
                             cfIndex = j;
-                        } else if (cellValue.includes('importo') || cellValue.includes('lord') || cellValue.includes('amount')) {
-                            importoIndex = j;
+                        } else if (cellValue.includes('importo lordo')) {
+                            importoLordoIndex = j;
+                        } else if (cellValue.includes('imposta')) {
+                            impostaIndex = j;
+                        } else if (cellValue.includes('importo netto')) {
+                            importoNettoIndex = j;
+                        } else if (cellValue.includes('cod') && cellValue.includes('fornitore')) {
+                            codFornitoreIndex = j;
                         }
                     }
                     
                     // Se abbiamo trovato tutte le colonne, usiamo questa riga come intestazione
-                    if (codFornitoreIndex !== -1 && descrizioneIndex !== -1 && cfIndex !== -1 && importoIndex !== -1) {
+                    if (descrizioneIndex !== -1 && cfIndex !== -1 && importoLordoIndex !== -1 && codFornitoreIndex !== -1) {
                         break;
                     }
                 }
             }
             
             // Se non troviamo intestazioni specifiche, assumiamo un ordine standard
-            if (codFornitoreIndex === -1) codFornitoreIndex = 0;
-            if (descrizioneIndex === -1) descrizioneIndex = 1;
-            if (cfIndex === -1) cfIndex = 2;
-            if (importoIndex === -1) importoIndex = 3;
+            if (descrizioneIndex === -1) descrizioneIndex = 0; // Colonna A
+            if (cfIndex === -1) cfIndex = 1; // Colonna B
+            if (importoLordoIndex === -1) importoLordoIndex = 2; // Colonna C
+            if (impostaIndex === -1) impostaIndex = 3; // Colonna D
+            if (importoNettoIndex === -1) importoNettoIndex = 4; // Colonna E
+            if (codFornitoreIndex === -1) codFornitoreIndex = 5; // Colonna F
             
             // Estrae i dati dei fornitori
             for (let i = 1; i < data.length; i++) {
                 const row = data[i];
-                if (Array.isArray(row) && row.length >= 4) {
-                    const codFornitore = String(row[codFornitoreIndex] || '').trim();
+                if (Array.isArray(row) && row.length > 0) {
                     const descrizione = String(row[descrizioneIndex] || '').trim();
                     const cf = String(row[cfIndex] || '').trim().replace(/[^a-zA-Z0-9]/g, '');
-                    let importo = parseFloat(row[importoIndex]) || 0;
+                    let importoNetto = parseFloat(row[importoNettoIndex]) || 0;
+                    const codFornitore = String(row[codFornitoreIndex] || '').trim();
                     
                     // Filtra righe vuote e valida i dati
-                    if (codFornitore && cf && importo > 0) {
+                    if (descrizione && cf && importoNetto > 0 && codFornitore) {
                         suppliers.push({
                             cod_fornitore: codFornitore,
-                            descrizione: descrizione || 'N/D',
+                            descrizione: descrizione,
                             cf: cf,
-                            importo_lordo: importo
+                            importo_lordo: importoNetto
                         });
                     }
                 }
